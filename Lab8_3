@@ -1,0 +1,97 @@
+import javax.swing.*;
+import java.awt.*;
+
+abstract class AbstractDrawFunction extends JPanel {
+    private Polygon p = new Polygon();
+
+    protected AbstractDrawFunction() {
+        drawFunction();
+        setBackground(Color.white);
+    }
+
+    public abstract double f(double x);
+
+    public void drawFunction() {
+        for (int x = -100; x <= 100; x++) {
+            p.addPoint(x + 200, 200 - (int)f(x));
+        }
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawLine(10, 200, 390, 200);
+        g.drawLine(200, 30, 200, 390);
+        g.drawLine(390, 200, 370, 190);
+        g.drawLine(390, 200, 370, 210);
+        g.drawLine(200, 30, 190, 50);
+        g.drawLine(200, 30, 210, 50);
+        g.drawString("X", 370, 170);
+        g.drawString("Y", 220, 40);
+        g.drawPolyline(p.xpoints, p.ypoints, p.npoints);
+    }
+}
+
+class DrawSquare extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return x * x;
+    }
+}
+
+class DrawSine extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return Math.sin(x) * 100;
+    }
+}
+
+class DrawCosine extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return Math.cos(x) * 100;
+    }
+}
+
+class DrawTangent extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return Math.tan(x) * 10;
+    }
+}
+
+class DrawCosSin1 extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return Math.cos(x) + 5 * Math.sin(x);
+    }
+}
+
+class DrawCosSin2 extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return 5 * Math.cos(x) + Math.sin(x);
+    }
+}
+
+class DrawLogSquare extends AbstractDrawFunction {
+    @Override
+    public double f(double x) {
+        return Math.log(Math.abs(x) + 1) + x * x;
+    }
+}
+
+public class Test extends JFrame {
+    public Test() {
+        getContentPane().setLayout(new GridLayout(1, 2, 5, 5));
+        getContentPane().add(new DrawSine());
+    }
+
+    public static void main(String[] args) {
+        Test frame = new Test();
+        frame.setSize(400, 400);
+        frame.setTitle("Exercise 10.10");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
