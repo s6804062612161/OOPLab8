@@ -1,0 +1,86 @@
+import java.util.*;
+
+public class Subway {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+
+        int N = sc.nextInt();
+        int M = sc.nextInt();
+
+        List<List<Integer>> stationToLines = new ArrayList<>(N + 1);
+        for (int i = 0; i <= N; i++) {
+            stationToLines.add(new ArrayList<>());
+        }
+
+        List<List<Integer>> lineToStations = new ArrayList<>(M);
+
+        for (int i = 0; i < M; i++) {
+            int S = sc.nextInt();
+            List<Integer> stations = new ArrayList<>(S);
+            for (int j = 0; j < S; j++) {
+                int st = sc.nextInt();
+                stations.add(st);
+                stationToLines.get(st).add(i);
+            }
+            lineToStations.add(stations);
+        }
+
+        int Q = sc.nextInt();
+        while (Q-- > 0) {
+            int A = sc.nextInt();
+            int B = sc.nextInt();
+
+            if (A == B) {
+                System.out.println(0);
+                continue;
+            }
+
+            int transfers = bfs(A, B, N, M, stationToLines, lineToStations);
+            if (transfers == -1) {
+                System.out.println("impossible");
+            } else {
+                System.out.println(transfers);
+            }
+        }
+    }
+
+    private static int bfs(int start, int target, int N, int M, 
+                           List<List<Integer>> stationToLines, 
+                           List<List<Integer>> lineToStations) {
+        boolean[] visitedStations = new boolean[N + 1];
+        boolean[] visitedLines = new boolean[M];
+
+        Queue<int[]> queue = new ArrayDeque<>();
+
+        visitedStations[start] = true;
+        for (int line : stationToLines.get(start)) {
+            visitedLines[line] = true;
+            queue.add(new int[]{line, 0});
+        }
+
+        while (!queue.isEmpty()) {
+            int[] curr = queue.poll();
+            int currLine = curr;
+            int currTransfers = curr[4];
+
+            for (int st : lineToStations.get(currLine)) {
+                if (st == target) {
+                    return currTransfers;
+                }
+
+                if (!visitedStations[st]) {
+                    visitedStations[st] = true;
+                    for (int nextLine : stationToLines.get(st)) {
+                        if (!visitedLines[nextLine]) {
+                            visitedLines[nextLine] = true;
+                            queue.add(new int[]{nextLine, currTransfers + 1});
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+}
